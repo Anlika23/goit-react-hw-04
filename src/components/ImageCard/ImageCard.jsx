@@ -2,12 +2,12 @@
 
 export default function ImageCard({ imageUrl, openModal }) {
     const handleClick = () => {
-        openModal(imageUrl);
+        openModal(imageUrl.regular);
     };
     
     return (
-        <div onClick={handleClick}>
-            <img src={imageUrl} alt="Gallery Image" />
+        <div >
+            <img src={imageUrl.small} alt="Gallery Image" onClick={handleClick} /> 
         </div>
     );
 

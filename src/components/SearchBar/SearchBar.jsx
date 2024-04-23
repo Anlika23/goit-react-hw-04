@@ -9,15 +9,11 @@ export default function SearchBar({ onSubmit }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         const inputValue = query.trim(); 
-        // console.log(inputValue)
 
         if (inputValue === '') { 
             toast.error('Please enter text to search images'); 
             return; 
         }
-
-        console.log('Submitting query:', inputValue);
-
         onSubmit(inputValue); 
         setQuery(''); 
     };

@@ -1,10 +1,9 @@
 import { InfinitySpin } from 'react-loader-spinner';
-// import css from './ImageLoader.module.css';
 
-export default function ImageLoader({ loading }) {
+export default function Loader({ isLoading }) {
     return (
         <div >
-            {loading && (
+            {isLoading && (
                 <InfinitySpin
                     visible={true}
                     width="200"

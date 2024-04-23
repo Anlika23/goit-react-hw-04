@@ -1,18 +1,18 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
-import Modal from 'react-modal';
+// import Modal from 'react-modal';
 
 import SearchBar from "../SearchBar/SearchBar";
 import ImageGallery from '../ImageGallery/ImageGallery';
-import ImageLoader from '../ImageLoader/ImageLoader';
+import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
+import ImageModal from '../ImageModal/ImageModal'; 
 
-import ImageModal from '../ImageModal/ImageModal';
 import css from './App.module.css';
 
-
 const ACCESS_KEY = 'u7TQI_X9qzwH-cnYKH240T3IujFm_wlKq82yGuyvWrM'; 
-Modal.setAppElement('#root');
+// Modal.setAppElement('#root');
 
 export default function App() {
   const [query, setQuery] = useState(''); 
@@ -25,25 +25,20 @@ export default function App() {
 
   const perPage = 12;
 
-
   const handleSearch = (newQuery) => {
     setQuery(newQuery);
     setPage(1);
     setImages([]);
   };
 
-  // Функція для відкриття модального вікна з обраним зображенням
   const openModal = (imageUrl) => {
     setSelectedImage(imageUrl);
   };
 
-  // Функція для закриття модального вікна
   const closeModal = () => {
     setSelectedImage(null);
   };
 
-
-    // Функція для отримання зображень з сервера Unsplash
   const fetchImages = async (query, page = 1) => {
     setLoading(true); 
     setError(null);
@@ -57,7 +52,7 @@ export default function App() {
       const data = await response.json();
       const newImages = data.results.map(result => ({
         small: result.urls.small,
-        regular: result.urls.regular // Додайте regular версію зображення
+        regular: result.urls.regular
       }));
       setImages(prevImages => [...prevImages, ...newImages]); 
       setTotalPages(data.total_pages); 
@@ -70,11 +65,10 @@ export default function App() {
     }
   };
 
-   useEffect(() => {
+  useEffect(() => {
     if (!query) return;
     fetchImages(query, page);
   }, [query, page]);
-
 
   const handleLoadMore = () => {
     if (page < totalPages) {
@@ -82,29 +76,16 @@ export default function App() {
     }
   };
 
-
-
   return (
     <div className={css.container}>
-      <SearchBar onSubmit={handleSearch} Toaster={Toaster} />
-       <Toaster />
+      <SearchBar onSubmit={handleSearch} />
+      <Toaster />
+     
       {error ? <ErrorMessage message={error} /> : <ImageGallery images={images} openModal={openModal} />}
-      {loading && <ImageLoader loading={loading} />}
-      {totalPages && totalPages !== page && <button className={css.btnLoader} onClick={handleLoadMore}>Load more</button>}
+      {loading && <Loader isLoading={loading} />}
+      {totalPages && totalPages !== page && <LoadMoreBtn onLoadMore={handleLoadMore} hasMore={totalPages && totalPages !== page} />}
 
-      <Modal
-        isOpen={selectedImage !== null}
-        onRequestClose={closeModal}
-        contentLabel="Image Modal"
-        className="modal"
-        overlayClassName="overlay"
-        shouldCloseOnEsc={true} 
-        shouldCloseOnOverlayClick={true}
-      >
-        {selectedImage && <ImageModal imageUrl={selectedImage} closeModal={closeModal} />}
-      </Modal>
+      {selectedImage && <ImageModal isOpen={true} imageUrl={selectedImage} closeModal={closeModal} />}
     </div>
-  )
+  );
 }
-
-
